@@ -7,25 +7,14 @@ bool valid(int &r, int &c, int &d, vector<vector<vector<bool>>> &vis) {
     return r >= 0 && c >= 0 && r < vis.size() && c < vis[0].size() && !vis[r][c][d];
 }
 
-int main() {
-    ifstream input("input.txt");
-    string line;
-    getline(input, line);
-
-    vector<string> grid;
-
-    while (line != "") {
-        grid.push_back(line);
-        getline(input, line);
-    }
-
+int test_case(int sr, int sc, int sd, vector<string> &grid) {
     vector<vector<vector<bool>>> vis(grid.size(), vector<vector<bool>>(grid[0].length(), vector<bool>(4, false)));
 
     deque<pair<int, int>> posq;
     deque<int> dq;
-    vis[0][0][0] = true;
-    posq.push_back(make_pair(0, 0));
-    dq.push_back(0);
+    vis[sr][sc][sd] = true;
+    posq.push_back(make_pair(sr, sc));
+    dq.push_back(sd);
 
     while (!posq.empty()) {
         pair<int, int> pos = posq.front();
@@ -67,6 +56,29 @@ int main() {
                 }
             }
         }
+    }
+    
+    return ans;
+}
+
+int main() {
+    ifstream input("input.txt");
+    string line;
+    getline(input, line);
+
+    vector<string> grid;
+
+    while (line != "") {
+        grid.push_back(line);
+        getline(input, line);
+    }
+
+    int ans = 0;
+    for (int i = 0; i < grid.size(); i++) {
+        ans = max(ans, max(test_case(i, 0, 0, grid), test_case(i, grid[0].length() - 1, 2, grid)));
+    }
+    for (int i = 0; i < grid[0].length(); i++) {
+        ans = max(ans, max(test_case(0, i, 3, grid), test_case(grid.size() - 1, i, 1, grid)));
     }
 
     cout << ans << endl;
